@@ -1,8 +1,8 @@
 # ==========================================================
 # ARTIFICIAL INTELLIGENCE - ASSESSMENT 1
 # Python Programs for Questions 1 to 5
-# Name : LAKSHITHA SREE K
-# Reg No : 192511336
+# Name : R S Jahnavi
+# Reg No : 192371056
 # ==========================================================
 
 # ==========================================================
@@ -62,42 +62,71 @@ print("\n")
 # ==========================================================
 # QUESTION 2 - MARS ROVER AGENT
 # ==========================================================
+# Mars Rover Intelligent Agent
 
-print("=" * 60)
-print("QUESTION 2 - MARS ROVER")
-print("=" * 60)
+print("========== MARS ROVER INTELLIGENT AGENT ==========")
 
-class MarsRover:
+# Performance Measure
+score = 0
+rocks = 0
+soil = 0
+obstacles = 0
 
-    def move(self):
-        print("Moving Forward")
+# Number of locations to explore
+steps = int(input("Enter number of locations to explore: "))
 
-    def turn(self):
-        print("Turning Left")
+for i in range(1, steps + 1):
 
-    def capture(self):
-        print("Capturing Image")
+    print("\nLocation", i)
+    print("Possible Percepts: Rock, Soil, Obstacle, Empty")
 
-    def collect(self):
-        print("Collecting Rock Sample")
+    percept = input("Enter what the rover detects: ").lower()
 
-    def analyse(self):
-        print("Analyzing Sample")
+    # Decision Making
+    if percept == "rock":
+        print("\nPercept  : Rock detected")
+        print("Action   : Analyze the rock")
+        print("Action   : Collect rock sample")
+        print("Action   : Send rock composition data to Earth")
+        rocks += 1
+        score += 10
 
-    def transmit(self):
-        print("Sending Data to Earth")
+    elif percept == "soil":
+        print("\nPercept  : Soil detected")
+        print("Action   : Analyze the soil")
+        print("Action   : Collect soil sample")
+        print("Action   : Send soil analysis to Earth")
+        soil += 1
+        score += 8
 
+    elif percept == "obstacle":
+        print("\nPercept  : Obstacle detected")
+        print("Action   : Stop movement")
+        print("Action   : Change direction")
+        print("Action   : Continue safely")
+        obstacles += 1
+        score += 5
 
-rover = MarsRover()
+    elif percept == "empty":
+        print("\nPercept  : Empty surface")
+        print("Action   : Move Forward")
+        print("Action   : Continue Exploration")
+        score += 2
 
-rover.move()
-rover.turn()
-rover.capture()
-rover.collect()
-rover.analyse()
-rover.transmit()
+    else:
+        print("\nInvalid percept entered.")
+        print("No action performed.")
 
-print("\n")
+# Mission Summary
+print("\n========== MISSION SUMMARY ==========")
+
+print("Rock Samples Collected :", rocks)
+print("Soil Samples Collected :", soil)
+print("Obstacles Avoided      :", obstacles)
+print("Performance Score      :", score)
+
+print("\nMission Completed Successfully.")
+
 
 
 # ==========================================================
