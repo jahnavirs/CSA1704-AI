@@ -202,43 +202,94 @@ print("\n")
 # ==========================================================
 # QUESTION 4 - OLA CAB BOOKING
 # ==========================================================
+# OLA CAB BOOKING SYSTEM - Goal Based Intelligent Agent
 
-print("=" * 60)
-print("QUESTION 4 - OLA CAB BOOKING")
-print("=" * 60)
+print("========== OLA CAB BOOKING SYSTEM ==========")
 
-pickup = input("Enter Pickup Location : ")
-destination = input("Enter Destination : ")
+# User Inputs
+source = input("Enter Pickup Location: ")
+destination = input("Enter Destination: ")
 
-cabs = {
+print("\nSelect your Priority")
+print("1. Lowest Fare")
+print("2. Highest Comfort")
+print("3. Minimum Waiting Time")
 
-    "Mini":150,
+choice = int(input("Enter your choice (1-3): "))
 
-    "Micro":120,
+# Cab Details
+cabs = [
+    {"name": "Mini", "fare": 150, "comfort": 2, "waiting": 8, "available": "Yes"},
+    {"name": "Sedan", "fare": 250, "comfort": 4, "waiting": 5, "available": "Yes"},
+    {"name": "Prime", "fare": 350, "comfort": 5, "waiting": 3, "available": "No"},
+    {"name": "SUV", "fare": 450, "comfort": 5, "waiting": 6, "available": "Yes"}
+]
 
-    "Sedan":250,
-
-    "Shared":100,
-
-    "Prime":300
-
-}
-
-print("\nAvailable Cabs\n")
+print("\nAvailable Cab Details")
+print("---------------------------------------------")
+print("Cab\tFare\tComfort\tWaiting\tAvailable")
 
 for cab in cabs:
-    print(cab, " - ₹", cabs[cab])
+    print(cab["name"], "\t", cab["fare"], "\t", cab["comfort"], "\t\t", cab["waiting"], "min\t", cab["available"])
 
-choice = input("\nSelect Cab : ")
+bestCab = None
 
-print("\nBooking Confirmed")
-print("-------------------------")
-print("Pickup :", pickup)
-print("Destination :", destination)
-print("Cab :", choice)
-print("Fare : ₹", cabs[choice])
+# Goal-Based Decision Making
 
-print("\n")
+if choice == 1:
+    minFare = 99999
+
+    for cab in cabs:
+        if cab["available"] == "Yes" and cab["fare"] < minFare:
+            minFare = cab["fare"]
+            bestCab = cab
+
+elif choice == 2:
+    maxComfort = -1
+
+    for cab in cabs:
+        if cab["available"] == "Yes" and cab["comfort"] > maxComfort:
+            maxComfort = cab["comfort"]
+            bestCab = cab
+
+elif choice == 3:
+    minWait = 99999
+
+    for cab in cabs:
+        if cab["available"] == "Yes" and cab["waiting"] < minWait:
+            minWait = cab["waiting"]
+            bestCab = cab
+
+else:
+    print("Invalid Choice")
+
+# Booking
+
+if bestCab != None:
+
+    print("\n========== BEST CAB FOUND ==========")
+
+    print("Cab Name      :", bestCab["name"])
+    print("Fare          : Rs.", bestCab["fare"])
+    print("Comfort Level :", bestCab["comfort"])
+    print("Waiting Time  :", bestCab["waiting"], "minutes")
+
+    confirm = input("\nDo you want to book this cab? (yes/no): ")
+
+    if confirm.lower() == "yes":
+        print("\nCab Booked Successfully")
+        print("Pickup      :", source)
+        print("Destination :", destination)
+        print("Driver will arrive in", bestCab["waiting"], "minutes.")
+        print("Have a Safe Journey!")
+
+    else:
+        print("\nBooking Cancelled")
+
+else:
+    print("No cab available.")
+
+
 
 
 # ==========================================================
