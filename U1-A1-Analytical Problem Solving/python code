@@ -295,69 +295,58 @@ else:
 # ==========================================================
 # QUESTION 5 - UNIFORM COST SEARCH
 # ==========================================================
-
-print("=" * 60)
-print("QUESTION 5 - UNIFORM COST SEARCH")
-print("=" * 60)
-
 import heapq
 
+# Graph representing warehouses and travel costs
 graph = {
-
-'S':[('A',1),('G',12)],
-
-'A':[('B',3),('C',1)],
-
-'B':[('D',3)],
-
-'C':[('D',1),('G',2)],
-
-'D':[('G',3)],
-
-'G':[]
-
+    'A': [('B', 2), ('C', 4)],
+    'B': [('D', 7), ('E', 3)],
+    'C': [('F', 5)],
+    'D': [('G', 1)],
+    'E': [('G', 6)],
+    'F': [('G', 2)],
+    'G': []
 }
 
+# Uniform Cost Search Function
+def uniform_cost_search(graph, start, goal):
 
-def ucs(start, goal):
-
-    pq = [(0, start, [start])]
+    # Priority Queue (Cost, Current Node, Path)
+    queue = [(0, start, [start])]
 
     visited = set()
 
-    while pq:
+    while queue:
 
-        cost, node, path = heapq.heappop(pq)
-
-        if node == goal:
-            return cost, path
+        cost, node, path = heapq.heappop(queue)
 
         if node in visited:
             continue
 
         visited.add(node)
 
-        for neighbour, weight in graph[node]:
+        if node == goal:
+            return cost, path
 
-            if neighbour not in visited:
+        for neighbor, edge_cost in graph[node]:
+            if neighbor not in visited:
+                heapq.heappush(queue,
+                               (cost + edge_cost,
+                                neighbor,
+                                path + [neighbor]))
 
-                heapq.heappush(
+    return None
 
-                    pq,
 
-                    (cost + weight, neighbour, path + [neighbour])
+# User Input
+start = input("Enter Starting Warehouse: ").upper()
+goal = input("Enter Destination Warehouse: ").upper()
 
-                )
+result = uniform_cost_search(graph, start, goal)
 
-cost, path = ucs('S', 'G')
-
-print("\nLeast Cost Path")
-
-print(" -> ".join(path))
-
-print("Minimum Cost =", cost)
-
-print("\n")
-print("=" * 60)
-print("ALL PROGRAMS EXECUTED SUCCESSFULLY")
-print("=" * 60)
+if result:
+    total_cost, shortest_path = result
+    print("\nOptimal Path :", " -> ".join(shortest_path))
+    print("Minimum Cost :", total_cost)
+else:
+    print("No path found.")
