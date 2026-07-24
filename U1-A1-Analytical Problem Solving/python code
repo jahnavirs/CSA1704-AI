@@ -8,55 +8,38 @@
 # ==========================================================
 # QUESTION 1 - WATER JUG PROBLEM USING BFS
 # ==========================================================
+# Water Jug Problem
 
-from collections import deque
+jug1_capacity = 4
+jug2_capacity = 3
 
-print("=" * 60)
-print("QUESTION 1 - WATER JUG PROBLEM")
-print("=" * 60)
+jug1 = 0
+jug2 = 0
 
-def water_jug():
-    visited = set()
-    queue = deque([((0, 0), [])])
+goal = 2
 
-    while queue:
-        (a, b), path = queue.popleft()
+while jug1 != goal:
 
-        if a == 2:
-            print("\nGoal Reached!\n")
-            for state in path + [(a, b)]:
-                print(state)
-            return
+    # Fill Jug 2
+    if jug2 == 0:
+        jug2 = jug2_capacity
+        print("Fill Jug2:", (jug1, jug2))
 
-        if (a, b) in visited:
-            continue
+    # Pour Jug2 into Jug1
+    transfer = min(jug2, jug1_capacity - jug1)
+    jug1 += transfer
+    jug2 -= transfer
+    print("Pour Jug2 -> Jug1:", (jug1, jug2))
 
-        visited.add((a, b))
+    # Empty Jug1 if full
+    if jug1 == jug1_capacity:
+        jug1 = 0
+        print("Empty Jug1:", (jug1, jug2))
 
-        next_states = [
+print("\nGoal Achieved!")
+print("Final State:", (jug1, jug2))
 
-            (4, b),                     # Fill 4L
-
-            (a, 3),                     # Fill 3L
-
-            (0, b),                     # Empty 4L
-
-            (a, 0),                     # Empty 3L
-
-            (a - min(a, 3 - b), b + min(a, 3 - b)),   # 4 -> 3
-
-            (a + min(b, 4 - a), b - min(b, 4 - a))    # 3 -> 4
-
-        ]
-
-        for state in next_states:
-
-            if state not in visited:
-                queue.append((state, path + [(a, b)]))
-
-water_jug()
-
-print("\n")
+           
 
 
 # ==========================================================
@@ -132,71 +115,73 @@ print("\nMission Completed Successfully.")
 # ==========================================================
 # QUESTION 3 - 8 QUEENS USING BACKTRACKING
 # ==========================================================
-
-print("=" * 60)
-print("QUESTION 3 - 8 QUEENS")
-print("=" * 60)
+# 8 Queens Problem using Backtracking
 
 N = 8
 
 board = [[0 for i in range(N)] for j in range(N)]
 
-def safe(row, col):
+def isSafe(board, row, col):
 
+    # Check left side of current row
     for i in range(col):
-        if board[row][i]:
+        if board[row][i] == 1:
             return False
 
+    # Check upper left diagonal
     i = row
     j = col
-
     while i >= 0 and j >= 0:
-
-        if board[i][j]:
+        if board[i][j] == 1:
             return False
-
         i -= 1
         j -= 1
 
+    # Check lower left diagonal
     i = row
     j = col
-
     while i < N and j >= 0:
-
-        if board[i][j]:
+        if board[i][j] == 1:
             return False
-
         i += 1
         j -= 1
 
     return True
 
 
-def solve(col):
+def solve(board, col):
 
+    # All queens are placed
     if col >= N:
         return True
 
+    # Try placing queen in every row
     for row in range(N):
 
-        if safe(row, col):
+        if isSafe(board, row, col):
 
             board[row][col] = 1
 
-            if solve(col + 1):
+            if solve(board, col + 1):
                 return True
 
+            # Backtracking
             board[row][col] = 0
 
     return False
 
 
-solve(0)
+if solve(board, 0):
 
-for row in board:
-    print(row)
+    print("Solution Found:\n")
 
-print("\n")
+    for row in board:
+        print(row)
+
+else:
+    print("Solution does not exist.")
+
+    
 
 
 # ==========================================================
