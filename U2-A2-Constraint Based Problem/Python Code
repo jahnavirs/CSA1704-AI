@@ -12,172 +12,272 @@ import heapq
 # QUESTION 1
 # Hospital Doctor Scheduling using Backtracking Search
 # ============================================================
-
-print("\n========== QUESTION 1 ==========")
-print("Hospital Doctor Scheduling using Backtracking Search\n")
-
+# List of doctors
 doctors = ["D1", "D2", "D3"]
+
+# List of available shifts
 shifts = ["Morning", "Afternoon", "Night"]
 
+# Dictionary to store final assignment
 assignment = {}
+
+# ---------------------------------------
+# Function to check whether assignment is valid
+# ---------------------------------------
 
 def is_safe(doctor, shift):
 
-    if doctor == "D1" and shift == "Night":
-        return False
-
-    if doctor == "D3" and shift == "Morning":
-        return False
-
+    # Constraint 1:
+    # One shift should not be assigned twice
     if shift in assignment.values():
         return False
 
-    if doctor == "D3" and "D2" in assignment:
-        order = {
-            "Morning": 1,
-            "Afternoon": 2,
-            "Night": 3
-        }
+    # Constraint 2:
+    # D1 cannot work Night shift
+    if doctor == "D1" and shift == "Night":
+        return False
 
-        if order[assignment["D2"]] >= order[shift]:
-            return False
+    # Constraint 3:
+    # D2 cannot work Morning shift
+    if doctor == "D2" and shift == "Morning":
+        return False
 
     return True
 
 
+# ---------------------------------------
+# Backtracking Function
+# ---------------------------------------
+
 def backtrack(index):
 
+    # Base condition
     if index == len(doctors):
         return True
 
+    # Current doctor
     doctor = doctors[index]
 
+    # Try every shift
     for shift in shifts:
 
+        print(f"Trying {doctor} -> {shift}")
+
+        # Check constraints
         if is_safe(doctor, shift):
 
+            # Assign shift
             assignment[doctor] = shift
 
+            print("Assigned:", assignment)
+
+            # Recursive call
             if backtrack(index + 1):
                 return True
+
+            # Backtracking
+            print("Backtracking from", doctor)
 
             del assignment[doctor]
 
     return False
 
 
+# ---------------------------------------
+# Driver Code
+# ---------------------------------------
+
 if backtrack(0):
 
-    print("Doctor Shift Schedule")
-    print("---------------------")
+    print("\nValid Schedule")
 
-    for doctor in assignment:
-        print(doctor, "->", assignment[doctor])
+    for doctor, shift in assignment.items():
+        print(doctor, "->", shift)
 
 else:
-    print("No Valid Schedule Found")
+    print("No valid schedule found.")
+
+
+
 
 
 # ============================================================
 # QUESTION 2
 # Robot Navigation using Breadth First Search
 # ============================================================
+from collections import deque
 
-print("\n========== QUESTION 2 ==========")
-print("Robot Navigation using Breadth First Search\n")
+# 5x5 Grid
+grid = [
+    ['S', '.', '.', '#', '.'],
+    ['.', '#', '.', '#', '.'],
+    ['.', '#', '.', '.', '.'],
+    ['.', '.', '#', '#', '.'],
+    ['#', '.', '.', 'G', '.']
+]
 
-graph = {
-    'S': ['A', 'B'],
-    'A': ['C'],
-    'B': ['D'],
-    'C': ['G'],
-    'D': ['G'],
-    'G': []
-}
+rows = 5
+cols = 5
 
-visited = []
-queue = deque()
+# Find Start and Goal positions
+for i in range(rows):
+    for j in range(cols):
+        if grid[i][j] == 'S':
+            start = (i, j)
+        elif grid[i][j] == 'G':
+            goal = (i, j)
 
-queue.append(('S', ['S']))
+# Possible movements
+directions = [
+    (-1, 0),  # Up
+    (1, 0),   # Down
+    (0, -1),  # Left
+    (0, 1)    # Right
+]
 
-while queue:
+# BFS Function
+def bfs(start, goal):
 
-    node, path = queue.popleft()
+    queue = deque()
+    queue.append((start, [start]))
 
-    if node not in visited:
+    visited = set()
+    visited.add(start)
 
-        visited.append(node)
+    while queue:
 
-        if node == 'G':
+        current, path = queue.popleft()
 
-            print("Shortest Path")
-            print(" -> ".join(path))
-            print("Total Cost =", len(path) - 1)
-            break
+        print("Current Node:", current)
+        print("Queue:", list(queue))
 
-        for neighbour in graph[node]:
+        if current == goal:
+            return path
 
-            if neighbour not in visited:
+        for dx, dy in directions:
 
-                queue.append((neighbour, path + [neighbour]))
+            x = current[0] + dx
+            y = current[1] + dy
+
+            if 0 <= x < rows and 0 <= y < cols:
+
+                if grid[x][y] != '#' and (x, y) not in visited:
+
+                    visited.add((x, y))
+                    queue.append(((x, y), path + [(x, y)]))
+
+    return None
+
+
+# Driver Code
+path = bfs(start, goal)
+
+if path:
+
+    print("\nShortest Path:")
+    print(path)
+
+    print("\nTotal Cost =", len(path) - 1)
+
+else:
+    print("No Path Found")
+
 
 
 # ============================================================
 # QUESTION 3
 # Rescue Robot using Uniform Cost Search
 # ============================================================
+import heapq
 
-print("\n========== QUESTION 3 ==========")
-print("Rescue Robot using Uniform Cost Search\n")
+# 5x5 Grid
+grid = [
+    ['S', '.', '.', '#', '.'],
+    ['.', 'R', '.', '#', '.'],
+    ['.', '#', '.', '.', '.'],
+    ['.', '.', 'R', '#', '.'],
+    ['#', '.', '.', 'G', '.']
+]
 
-graph = {
+rows = 5
+cols = 5
 
-    'S': [('A', 1), ('B', 4)],
+# Find Start and Goal
+for i in range(rows):
+    for j in range(cols):
+        if grid[i][j] == 'S':
+            start = (i, j)
+        elif grid[i][j] == 'G':
+            goal = (i, j)
 
-    'A': [('C', 2), ('D', 5)],
+# Possible moves
+directions = [
+    (-1, 0),  # Up
+    (1, 0),   # Down
+    (0, -1),  # Left
+    (0, 1)    # Right
+]
 
-    'B': [('D', 1)],
+# Uniform Cost Search Function
+def uniform_cost_search(start, goal):
 
-    'C': [('G', 3)],
+    # Priority Queue
+    pq = []
 
-    'D': [('G', 2)],
+    # (cost, current_position, path)
+    heapq.heappush(pq, (0, start, [start]))
 
-    'G': []
+    visited = {}
 
-}
+    while pq:
 
-priority_queue = []
+        cost, current, path = heapq.heappop(pq)
 
-heapq.heappush(priority_queue, (0, 'S', ['S']))
+        print("Current Node:", current)
+        print("Current Cost:", cost)
 
-visited = []
+        if current == goal:
+            return path, cost
 
-while priority_queue:
+        if current in visited and visited[current] <= cost:
+            continue
 
-    cost, node, path = heapq.heappop(priority_queue)
+        visited[current] = cost
 
-    if node not in visited:
+        for dx, dy in directions:
 
-        visited.append(node)
+            x = current[0] + dx
+            y = current[1] + dy
 
-        if node == 'G':
+            if 0 <= x < rows and 0 <= y < cols:
 
-            print("Least Cost Path")
-            print(" -> ".join(path))
-            print("Total Cost =", cost)
-            break
+                if grid[x][y] != '#':
 
-        for neighbour, weight in graph[node]:
+                    # Normal move cost
+                    new_cost = cost + 1
 
-            if neighbour not in visited:
+                    # Extra cost for risky zone
+                    if grid[x][y] == 'R':
+                        new_cost += 2
 
-                heapq.heappush(
-                    priority_queue,
-                    (
-                        cost + weight,
-                        neighbour,
-                        path + [neighbour]
+                    heapq.heappush(
+                        pq,
+                        (new_cost, (x, y), path + [(x, y)])
                     )
-                )
+
+    return None, None
+
+
+# Driver Code
+path, cost = uniform_cost_search(start, goal)
+
+if path:
+    print("\nMinimum Cost Path:")
+    print(path)
+    print("Total Cost =", cost)
+else:
+    print("No Path Found")
+
+
 
 print("\n========== PROGRAM COMPLETED ==========")
